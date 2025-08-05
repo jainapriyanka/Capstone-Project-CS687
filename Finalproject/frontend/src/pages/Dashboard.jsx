@@ -1,28 +1,34 @@
-import "./Dashboard.css";
+import React from 'react';
+import Sidebar from '../components/Sidebar';
+import Navbar from '../components/Navbar';
+import './Dashboard.css';
 
-function Dashboard() {
-  const earnings = 5000;
-  const expenses = 2300;
-
+const Dashboard = () => {
   return (
     <div className="dashboard-container">
-      <h2>Dashboard</h2>
-      <div className="summary">
-        <div className="card earnings">
-          <h3>Earnings</h3>
-          <p>₹{earnings}</p>
-        </div>
-        <div className="card expenses">
-          <h3>Expenses</h3>
-          <p>₹{expenses}</p>
-        </div>
-        <div className="card balance">
-          <h3>Balance</h3>
-          <p>₹{earnings - expenses}</p>
+      <Sidebar />
+      <div className="dashboard-main">
+        <Navbar />
+        <div className="dashboard-content">
+          <h2>Welcome back, Nikki 👋</h2>
+          <div className="summary-cards">
+            <div className="card income-card">
+              <h3>Total Income</h3>
+              <p>$92,350</p>
+            </div>
+            <div className="card expense-card">
+              <h3>Total Expense</h3>
+              <p>$74,870</p>
+            </div>
+            <div className="card balance-card">
+              <h3>Balance</h3>
+              <p>$17,480</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Dashboard;
