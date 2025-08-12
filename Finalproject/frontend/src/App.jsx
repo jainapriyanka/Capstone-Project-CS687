@@ -1,9 +1,11 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/Sidebar";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Activity from "./pages/Activity";
+import Signup from "./pages/Signup";
 import './App.css'; // Optional: for global layout styles
 
 function AppContent() {
@@ -26,6 +28,7 @@ function AppContent() {
       ) : (
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       )}
     </>
