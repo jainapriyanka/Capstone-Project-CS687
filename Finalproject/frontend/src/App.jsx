@@ -6,11 +6,12 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Activity from "./pages/Activity";
 import Signup from "./pages/Signup";
+import Chatbot from "./pages/Chatbot";
 import './App.css'; // Optional: for global layout styles
 
 function AppContent() {
   const location = useLocation();
-  const showLayout = location.pathname === "/dashboard" || location.pathname === "/activity";
+  const showLayout = location.pathname === "/dashboard" || location.pathname === "/activity" || location.pathname === "/chatbot";
 
   return (
     <>
@@ -22,6 +23,7 @@ function AppContent() {
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/activity" element={<Activity />} />
+              <Route path="/chatbot" element={<Chatbot />} />
             </Routes>
           </div>
         </div>
