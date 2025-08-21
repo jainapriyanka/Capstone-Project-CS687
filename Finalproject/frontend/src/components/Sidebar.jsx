@@ -23,6 +23,12 @@ const Sidebar = () => {
           <li className={location.pathname === '/activity' ? 'active' : ''}>
             <Link to="/activity">Activity</Link>
           </li>
+          <li className={location.pathname === '/income' ? 'active' : ''}>
+            <Link to="/income">Income</Link>
+          </li>
+          <li className={location.pathname === '/expense' ? 'active' : ''}>
+            <Link to="/expense">Expense</Link>
+          </li>
         </ul>
         <ul className="sidebar-bottom">
           <li className={location.pathname === '/chatbot' ? 'active' : ''}>
