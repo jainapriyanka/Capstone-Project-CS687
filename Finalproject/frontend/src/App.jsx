@@ -8,7 +8,8 @@ import Signup from "./pages/Signup";
 import Chatbot from "./pages/Chatbot";
 import Expense from "./pages/Expense";
 import Income from "./pages/Income";
-import './App.css'; // Optional: for global layout styles
+import PrivateRoute from "./components/PrivateRoute"; // import new component
+import './App.css';
 
 function AppContent() {
   const location = useLocation();
@@ -22,11 +23,11 @@ function AppContent() {
           <div className="main-section">
             <Navbar />
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/activity" element={<Activity />} />
-              <Route path="/chatbot" element={<Chatbot />} />
-               <Route path="/income" element={<Income />} />
-                <Route path="/expense" element={<Expense />} />
+              <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+              <Route path="/activity" element={<PrivateRoute><Activity /></PrivateRoute>} />
+              <Route path="/chatbot" element={<PrivateRoute><Chatbot /></PrivateRoute>} />
+              <Route path="/income" element={<PrivateRoute><Income /></PrivateRoute>} />
+              <Route path="/expense" element={<PrivateRoute><Expense /></PrivateRoute>} />
             </Routes>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import "./Login.css"; // Reuse same styling
+import "./Login.css";
 
 function Signup() {
   const [form, setForm] = useState({
@@ -16,7 +16,7 @@ function Signup() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (form.password !== form.confirmPassword) {
@@ -24,8 +24,32 @@ function Signup() {
       return;
     }
 
-    // Add registration logic here (e.g., API call)
-    navigate("/dashboard");
+    try {
+      const res = await fetch(
+        "https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/auth/signup",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message); // Show "User registered successfully"
+        navigate("/");       // Redirect to login page
+      } else {
+        alert(data.message || "Signup failed");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Try again.");
+    }
   };
 
   return (
