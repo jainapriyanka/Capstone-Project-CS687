@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // 👈 import axios
 import "./ExpenseIncome.css";
-import Form from "./Form.jsx";
 
 const Expense = () => {
   const [formData, setFormData] = useState({
@@ -13,14 +13,47 @@ const Expense = () => {
 
   const [expenses, setExpenses] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setExpenses([...expenses, formData]);
-    setFormData({ title: "", amount: "", date: "", category: "", reference: "" });
+  // Fetch expenses from backend when page loads
+  const fetchExpenses = async () => {
+    try {
+      const res = await axios.get("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=expense");
+      setExpenses(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (index) => {
-    setExpenses(expenses.filter((_, i) => i !== index));
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.post("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions", {
+        title: formData.title,
+        amount: Number(formData.amount),
+        date: formData.date,
+        type: "expense", // important
+        category: formData.category,
+        reference: formData.reference
+      });
+
+      setExpenses([...expenses, res.data.data]); // add new expense dynamically
+      setFormData({ title: "", amount: "", date: "", category: "", reference: "" });
+    } catch (err) {
+      console.error("Error adding expense:", err.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`);
+      setExpenses(expenses.filter((exp) => exp._id !== id));
+    } catch (err) {
+      console.error("Error deleting expense:", err.message);
+    }
   };
 
   const totalExpense = expenses.reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -55,10 +88,14 @@ const Expense = () => {
             required
           >
             <option value="">Select Option</option>
-            <option value="Renovation">Renovation</option>
+            <option value="Rent">Rent</option>
+            <option value="House Loan">House Loan</option>
+            <option value="Car Loan">Car Loan</option>
             <option value="Festival">Festival</option>
             <option value="Fare Charges">Fare Charges</option>
             <option value="Meal">Meal</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Other">Other</option>
           </select>
           <textarea
             placeholder="Add A Reference"
@@ -73,17 +110,17 @@ const Expense = () => {
         <h2>
           Total Expense: <span className="total-amount">${totalExpense}</span>
         </h2>
-        {expenses.map((exp, index) => (
-          <div className="item-card" key={index}>
+        {expenses.map((exp) => (
+          <div className="item-card" key={exp._id}>
             <div className="item-info">
               <div className="icon-circle"></div>
               <div>
                 <h3>{exp.title}</h3>
-                <p>${exp.amount} • {exp.date}</p>
+                <p>${exp.amount} • {new Date(exp.date).toLocaleDateString()} • {exp.category}</p>
                 <p className="reference">{exp.reference}</p>
               </div>
             </div>
-            <button className="delete-btn" onClick={() => handleDelete(index)}>🗑</button>
+            <button className="delete-btn" onClick={() => handleDelete(exp._id)}>🗑</button>
           </div>
         ))}
       </div>

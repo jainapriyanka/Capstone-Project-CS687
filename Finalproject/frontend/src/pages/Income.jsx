@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios"; // 👈 import axios
 import "./ExpenseIncome.css";
-import Form from "./Form.jsx";
 
 const Income = () => {
   const [formData, setFormData] = useState({
@@ -13,14 +13,47 @@ const Income = () => {
 
   const [incomes, setIncomes] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIncomes([...incomes, formData]);
-    setFormData({ title: "", amount: "", date: "", category: "", reference: "" });
+  // Fetch incomes from backend when page loads
+  const fetchIncomes = async () => {
+    try {
+      const res = await axios.get("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=income");
+      setIncomes(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (index) => {
-    setIncomes(incomes.filter((_, i) => i !== index));
+  useEffect(() => {
+    fetchIncomes();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+    const res = await axios.post("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions", {
+      title: formData.title,
+      amount: Number(formData.amount),
+      date: formData.date,
+      type: "income",
+      category: formData.category, // 👈 Include category
+      reference: formData.reference
+    });
+
+      setIncomes([...incomes, res.data.data]); // add new income dynamically
+      setFormData({ title: "", amount: "", date: "", category: "", reference: "" });
+    } catch (err) {
+      console.error("Error adding income:", err.message);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`);
+      setIncomes(incomes.filter((inc) => inc._id !== id));
+    } catch (err) {
+      console.error("Error deleting income:", err.message);
+    }
   };
 
   const totalIncome = incomes.reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -73,17 +106,17 @@ const Income = () => {
         <h2>
           Total Income: <span className="total-amount income">${totalIncome}</span>
         </h2>
-        {incomes.map((inc, index) => (
-          <div className="item-card" key={index}>
+        {incomes.map((inc) => (
+          <div className="item-card" key={inc._id}>
             <div className="item-info">
               <div className="icon-circle"></div>
               <div>
                 <h3>{inc.title}</h3>
-                <p>${inc.amount} • {inc.date}</p>
+                <p>${inc.amount} • {new Date(inc.date).toLocaleDateString()}</p>
                 <p className="reference">{inc.reference}</p>
               </div>
             </div>
-            <button className="delete-btn" onClick={() => handleDelete(index)}>🗑</button>
+            <button className="delete-btn" onClick={() => handleDelete(inc._id)}>🗑</button>
           </div>
         ))}
       </div>
