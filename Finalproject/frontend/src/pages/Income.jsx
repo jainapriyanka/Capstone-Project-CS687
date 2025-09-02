@@ -16,12 +16,23 @@ const Income = () => {
   // Fetch incomes from backend when page loads
   const fetchIncomes = async () => {
     try {
-      const res = await axios.get("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=income");
+      const token = localStorage.getItem("token");
+      if (!token) return; // user not logged in
+
+      const res = await axios.get(
+        "https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=income",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ include token
+          },
+        }
+      );
       setIncomes(res.data);
     } catch (err) {
       console.error(err);
     }
   };
+
 
   useEffect(() => {
     fetchIncomes();
@@ -31,14 +42,22 @@ const Income = () => {
     e.preventDefault();
 
     try {
-    const res = await axios.post("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions", {
-      title: formData.title,
-      amount: Number(formData.amount),
-      date: formData.date,
-      type: "income",
-      category: formData.category, // 👈 Include category
-      reference: formData.reference
-    });
+    const res = await axios.post(
+      "https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions",
+      {
+        title: formData.title,
+        amount: Number(formData.amount),
+        date: formData.date,
+        type: "income",
+        category: formData.category,
+        reference: formData.reference
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
       setIncomes([...incomes, res.data.data]); // add new income dynamically
       setFormData({ title: "", amount: "", date: "", category: "", reference: "" });

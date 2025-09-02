@@ -13,8 +13,10 @@ app.use(express.json());
 // Routes
 const transactionRoutes = require('./routes/transactions');
 const authRoutes = require('./routes/auth');   // 👈 NEW
+const summaryRoutes = require('./routes/summary');   // 👈 NEW
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/auth', authRoutes);              // 👈 NEW
+app.use('/api/dashboard', summaryRoutes); 
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

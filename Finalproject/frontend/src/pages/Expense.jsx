@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios"; // 👈 import axios
+import axios from "axios";
 import "./ExpenseIncome.css";
 
 const Expense = () => {
@@ -16,10 +16,20 @@ const Expense = () => {
   // Fetch expenses from backend when page loads
   const fetchExpenses = async () => {
     try {
-      const res = await axios.get("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=expense");
+      const token = localStorage.getItem("token");
+      if (!token) return; // user not logged in
+
+      const res = await axios.get(
+        "https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions?type=expense",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ include token
+          },
+        }
+      );
       setExpenses(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching expenses:", err);
     }
   };
 
@@ -29,16 +39,26 @@ const Expense = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const res = await axios.post("https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions", {
-        title: formData.title,
-        amount: Number(formData.amount),
-        date: formData.date,
-        type: "expense", // important
-        category: formData.category,
-        reference: formData.reference
-      });
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const res = await axios.post(
+        "https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions",
+        {
+          title: formData.title,
+          amount: Number(formData.amount),
+          date: formData.date,
+          type: "expense",
+          category: formData.category,
+          reference: formData.reference
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ include token
+          },
+        }
+      );
 
       setExpenses([...expenses, res.data.data]); // add new expense dynamically
       setFormData({ title: "", amount: "", date: "", category: "", reference: "" });
@@ -49,7 +69,17 @@ const Expense = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`);
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      await axios.delete(
+        `https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ include token
+          },
+        }
+      );
       setExpenses(expenses.filter((exp) => exp._id !== id));
     } catch (err) {
       console.error("Error deleting expense:", err.message);
