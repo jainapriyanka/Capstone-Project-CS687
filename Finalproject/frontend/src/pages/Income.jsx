@@ -68,7 +68,15 @@ const Income = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`);
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `https://friendly-couscous-7v9qpxqwx99gfp5vw-5000.app.github.dev/api/transactions/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setIncomes(incomes.filter((inc) => inc._id !== id));
     } catch (err) {
       console.error("Error deleting income:", err.message);
