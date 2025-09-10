@@ -12,11 +12,11 @@ app.use(express.json());
 
 // Routes
 const transactionRoutes = require('./routes/transactions');
-const authRoutes = require('./routes/auth');   // 👈 NEW
-const summaryRoutes = require('./routes/summary');   // 👈 NEW
+const authRoutes = require('./routes/auth');  
+const summaryRoutes = require('./routes/summary');   
 const chatRoutes = require("./routes/chat");
 app.use('/api/transactions', transactionRoutes);
-app.use('/api/auth', authRoutes);              // 👈 NEW
+app.use('/api/auth', authRoutes);             
 app.use('/api/dashboard', summaryRoutes); 
 app.use("/api/chat", chatRoutes);
 
